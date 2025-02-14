@@ -1,0 +1,6 @@
+@Aspire.OtlpAPI_HostAddress = http://localhost:5192
+
+GET {{Aspire.OtlpAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
