@@ -1,4 +1,8 @@
 
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+
 namespace Aspire.OtlpAPI;
 
 public class Program
@@ -12,6 +16,31 @@ public class Program
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
+
+
+
+        // Adding observability code to an app yourself.
+        builder.Logging.AddOpenTelemetry(configure: logging =>
+        {
+            logging.IncludeScopes = true;
+            logging.IncludeFormattedMessage = true;
+        });
+
+        builder.Services.AddOpenTelemetry()
+            .WithTracing(configure: static tracing =>
+            {
+                tracing.AddHttpClientInstrumentation();
+                tracing.AddAspNetCoreInstrumentation();
+            })
+            .WithMetrics(configure: static metrics =>
+            {
+                metrics.AddHttpClientInstrumentation();
+                metrics.AddAspNetCoreInstrumentation();
+                metrics.AddRuntimeInstrumentation();
+            })
+            .UseOtlpExporter();
+
+
 
         var app = builder.Build();
 
@@ -32,7 +61,7 @@ public class Program
 
         app.MapGet("/weatherforecast", (HttpContext httpContext) =>
         {
-            var forecast =  Enumerable.Range(1, 5).Select(index =>
+            var forecast = Enumerable.Range(1, 5).Select(index =>
                 new WeatherForecast
                 {
                     Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
