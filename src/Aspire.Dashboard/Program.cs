@@ -12,6 +12,8 @@ public class Program
 
         startup.ConfigureOptions(builder: builder);
 
+        startup.ConfigureKestrelEndpoints(builder: builder);
+
         var app = builder.Build();
 
         startup.Configure(app: app, env: app.Environment);
