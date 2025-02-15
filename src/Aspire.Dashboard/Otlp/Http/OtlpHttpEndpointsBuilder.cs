@@ -3,6 +3,7 @@ using System.IO.Pipelines;
 using System.Net.Http.Headers;
 using System.Reflection;
 using Aspire.Dashboard.Authentication;
+using Aspire.Dashboard.Configuration;
 using Google.Protobuf;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -25,23 +26,24 @@ public static class OtlpHttpEndpointsBuilder
         Json
     }
 
-    public static void MapHttpOtlpApi(this IEndpointRouteBuilder endpoints/*, OtlpOptions options*/)
+    public static void MapHttpOtlpApi(this IEndpointRouteBuilder endpoints, OtlpOptions options)
     {
-        //var httpEndpoint = options.GetHttpEndpointAddress();
-        //if (httpEndpoint == null)
-        //{
-        //    // Don't map OTLP HTTP route endpoints if there isn't a Kestrel endpoint to access them with.
-        //    return;
-        //}
+        var httpEndpoint = options.GetHttpEndpointAddress();
+
+        if (httpEndpoint == null)
+        {
+            // Don't map OTLP HTTP route endpoints if there isn't a Kestrel endpoint to access them with.
+            return;
+        }
 
         var group = endpoints
             .MapGroup("/v1")
             .AddOtlpHttpMetadata();
 
-        //if (!string.IsNullOrEmpty(options.Cors.AllowedOrigins))
-        //{
-        //    group = group.RequireCors(CorsPolicyName);
-        //}
+        if (!string.IsNullOrEmpty(options.Cors.AllowedOrigins))
+        {
+            group = group.RequireCors(CorsPolicyName);
+        }
 
         group.MapPost("logs", static (MessageBindable<ExportLogsServiceRequest> request, OtlpLogsService service) =>
         {
@@ -74,6 +76,7 @@ public static class OtlpHttpEndpointsBuilder
         builder
             .RequireAuthorization(OtlpAuthorization.PolicyName)
             .Add(b => b.Metadata.Add(new SkipStatusCodePagesAttribute()));
+
         return builder;
     }
 

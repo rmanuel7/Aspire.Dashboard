@@ -1,9 +1,12 @@
-﻿using Grpc.Core;
+﻿using Aspire.Dashboard.Authentication;
+using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.Proto.Collector.Metrics.V1;
 
 namespace Aspire.Dashboard.Otlp.Grpc;
 
+[Authorize(Policy = OtlpAuthorization.PolicyName)]
 [SkipStatusCodePages]
 public class OtlpGrpcMetricsService : MetricsService.MetricsServiceBase
 {

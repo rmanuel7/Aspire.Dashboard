@@ -14,6 +14,8 @@ public class Program
 
         startup.ConfigureKestrelEndpoints(builder: builder);
 
+        startup.ConfigureAuthentication(builder: builder);
+
         var app = builder.Build();
 
         startup.Configure(app: app, env: app.Environment);
