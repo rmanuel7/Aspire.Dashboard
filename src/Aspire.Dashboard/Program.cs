@@ -10,7 +10,7 @@ public class Program
 
         startup.ConfigureServices(services: builder.Services);
 
-
+        startup.ConfigureOptions(builder: builder);
 
         var app = builder.Build();
 

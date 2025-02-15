@@ -32,10 +32,6 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
-[Ll]og/
-[Ll]ogs/
-!src/Aspire.Dashboard/Otlp/opentelemetry/proto/logs/
-!src/Aspire.Dashboard/Otlp/opentelemetry/proto/collector/logs/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
